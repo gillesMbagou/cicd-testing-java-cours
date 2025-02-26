@@ -174,7 +174,7 @@ public class CalculatorTest {
 		final int number = 12;
 
 		// WHEN
-		final int cacheFactorial = calculatorUnderTest.fact(number);
+		final int cacheFactorial = calculatorUnderTest.factorial(number).intValue();
 
 		// THEN
 		assertThat(cacheFactorial).isEqualTo(12 * 11 * 10 * 9 * 8 * 7 * 6 * 5 * 4 * 3 * 2);
