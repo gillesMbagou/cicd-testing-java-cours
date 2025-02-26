@@ -5,6 +5,7 @@ public enum CalculationType {
     MULTIPLICATION,
     DIVISION,
     SUBTRACTION,
+    MODULO,
     CONVERSION;
 
     public static CalculationType fromSymbol(String operation) {
@@ -15,10 +16,11 @@ public enum CalculationType {
                 return SUBTRACTION;
             case "/":
                 return DIVISION;
-            case "*":
-                return MULTIPLICATION;
+            case "*" :
             case "x":
                 return MULTIPLICATION;
+            case "%":
+                return MODULO;
             default:
                 throw new UnsupportedOperationException("Not implemented yet");
         }
