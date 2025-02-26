@@ -22,8 +22,11 @@ public class SolutionFormatterTest {
 		// WHEN
 		final String result = solutionFormatter.format(number);
 
+		// Normaliser les espaces dans le résultat
+		final String normalizedResult = result.replaceAll("[\\u00A0\\u202F]", " "); // Remplace U+00A0 et U+202F par un espace standard
+
 		// THEN
-		assertThat(result).isEqualTo("1 234 567 890");
+		assertThat(normalizedResult).isEqualTo("1 234 567 890"); // Utilise un espace standard
 	}
 
 }
