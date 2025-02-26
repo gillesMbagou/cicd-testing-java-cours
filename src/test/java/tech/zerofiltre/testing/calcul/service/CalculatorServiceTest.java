@@ -113,11 +113,18 @@ public class CalculatorServiceTest {
 
 	@Test
 	public void calculate_shouldThrowIllegalArgumentException_forADivisionBy0() {
-		// GIVEN
+
+		// WHEN
+		assertThrows(IllegalArgumentException.class, () -> classUnderTest.calculate(
+				new CalculationModel(CalculationType.DIVISION, 1, 0)));
+
+		// THEN
+		verify(calculator, never()).divide(1, 0); // Aucun appel à divide()
+		/*// GIVEN
 		CalculationModel calculationModel = new CalculationModel(CalculationType.DIVISION, 1, 0);
 
 		// WHEN & THEN
-		assertThrows(IllegalArgumentException.class, () -> classUnderTest.calculate(calculationModel));
+		assertThrows(IllegalArgumentException.class, () -> classUnderTest.calculate(calculationModel));*/
 		/*// GIVEN
 		when(calculator.divide(1, 0)).thenThrow(new IllegalArgumentException());
 
