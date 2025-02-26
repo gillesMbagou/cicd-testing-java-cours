@@ -2,12 +2,16 @@ package tech.zerofiltre.testing.calcul.service;
 
 import javax.inject.Named;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tech.zerofiltre.testing.calcul.domain.Calculator;
 import tech.zerofiltre.testing.calcul.domain.model.CalculationModel;
 import tech.zerofiltre.testing.calcul.domain.model.CalculationType;
 
 @Named
 public class CalculatorServiceImpl implements CalculatorService {
+
+	private static final Logger logger = LoggerFactory.getLogger(CalculatorServiceImpl.class);
 
 	private final Calculator calculator;
 
@@ -34,12 +38,19 @@ public class CalculatorServiceImpl implements CalculatorService {
 			response = calculator.multiply(calculationModel.getLeftArgument(), calculationModel.getRightArgument());
 			break;
 		case DIVISION:
-			try {
-				response = calculator.divide(calculationModel.getLeftArgument(), calculationModel.getRightArgument());
-			} catch (final ArithmeticException e) {
-				throw new IllegalArgumentException(e);
-			}
-			break;
+			if (calculationModel.getRightArgument() == 0) {
+				logger.warn("ATTEMPTED DIVISION BY ZERO DETECTED.");
+					throw new IllegalArgumentException("the denominator cannot be zero");
+				}
+			response = calculator.divide(calculationModel.getLeftArgument(), calculationModel.getRightArgument());
+		    break;
+		case MODULO:
+				if (calculationModel.getRightArgument() == 0) {
+					logger.warn("MODULO ATTEMPT BY ZERO DETECTED.");
+					throw new IllegalArgumentException("the modulo by zero is not defined.");
+				}
+				response = calculator.mod(calculationModel.getLeftArgument(), calculationModel.getRightArgument());
+				break;
 		default:
 			throw new UnsupportedOperationException("Unsupported calculations");
 		}
