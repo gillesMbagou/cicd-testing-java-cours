@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import tech.zerofiltre.testing.calcul.domain.Calculator;
 import tech.zerofiltre.testing.calcul.domain.model.CalculationModel;
 import tech.zerofiltre.testing.calcul.domain.model.CalculationType;
+import tech.zerofiltre.testing.calcul.exception.strategy.CalculationException;
 
 @Named
 public class CalculatorServiceImpl implements CalculatorService {
@@ -24,40 +25,34 @@ public class CalculatorServiceImpl implements CalculatorService {
 
 	@Override
 	public CalculationModel calculate(CalculationModel calculationModel) {
-		final CalculationType type = calculationModel.getType();
 
-		Integer response = null;
-		switch (type) {
-		case ADDITION:
-			response = calculator.add(calculationModel.getLeftArgument(), calculationModel.getRightArgument());
-			break;
-		case SUBTRACTION:
-			response = calculator.sub(calculationModel.getLeftArgument(), calculationModel.getRightArgument());
-			break;
-		case MULTIPLICATION:
-			response = calculator.multiply(calculationModel.getLeftArgument(), calculationModel.getRightArgument());
-			break;
-		case DIVISION:
-			if (calculationModel.getRightArgument() == 0) {
-				logger.warn("ATTEMPTED DIVISION BY ZERO DETECTED.");
-					throw new IllegalArgumentException("the denominator cannot be zero");
-				}
-			response = calculator.divide(calculationModel.getLeftArgument(), calculationModel.getRightArgument());
-		    break;
-		case MODULO:
-				if (calculationModel.getRightArgument() == 0) {
-					logger.warn("MODULO ATTEMPT BY ZERO DETECTED.");
-					throw new IllegalArgumentException("the modulo by zero is not defined.");
-				}
-				response = calculator.mod(calculationModel.getLeftArgument(), calculationModel.getRightArgument());
-				break;
-		default:
-			throw new UnsupportedOperationException("Unsupported calculations");
+		// Validation préalable
+		if(calculationModel.getType() == null) {
+			calculationModel.setError("Type de calcul non spécifié");
+			return calculationModel;
+		}
+		final CalculationType type = calculationModel.getType();
+		double[] operands = prepareOperands(calculationModel, type);
+
+		try {
+			double result = type.apply(operands);
+			calculationModel.setSolution(result);
+		} catch (CalculationException e) {
+			calculationModel.setError(e.getMessage());
 		}
 
-		calculationModel.setSolution(response);
-		calculationModel.setFormattedSolution(solutionFormatter.format(response));
 		return calculationModel;
+	}
+
+	private double[] prepareOperands(CalculationModel calculation, CalculationType type) {
+		double[] operands = new double[type.getOperandCount()];
+		operands[0] = calculation.getLeftArgument();
+
+		if(type.getOperandCount() > 1) {
+			operands[1] = calculation.getRightArgument();
+		}
+
+		return operands;
 	}
 
 }
