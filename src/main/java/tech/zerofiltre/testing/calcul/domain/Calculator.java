@@ -1,7 +1,6 @@
 package tech.zerofiltre.testing.calcul.domain;
 
 import java.math.BigInteger;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,44 +37,34 @@ public class Calculator {
 	};
 	private static final int PRECOMPUTED_LIMIT = LONG_FACTORIALS.length - 1;
 
-	public int add(int a, int b) {
-		return Math.addExact(a, b); // Détection des dépassements
+	public double add(int a, int b) {
+		return Math.addExact(a,b); // Détection des dépassements
 	}
 
-	public int sub(int a, int b) {
+	public double sub(int a, int b) {
 		return Math.subtractExact(a, b); // Détection des dépassements
 	}
 
-	public int multiply(int a, int b) {
+	public double multiply(int a, int b) {
 		return Math.multiplyExact(a, b); // Détection des dépassements
 	}
 
-	public int divide(int a, int b) {
+	public double divide(int a, int b) {
 		if (b == 0) {
 			throw new ArithmeticException("Division by zero");
 		}
-		return a / b;
+		return (double) a/b; // Détection des dépassements
+	}
+	public double divide(double multiply, int b) {
+		if (b == 0) {
+			throw new ArithmeticException("Division by zero");
+		}
+		return  multiply/b; // Détection des dépassements
 	}
 	public int mod(int a, int b) {  if (b == 0) {
 		throw new ArithmeticException("Modulo by zero");
 	}
 		return a % b;}
-
-	public double add(double a, double b) {
-		return a + b;
-	}
-
-	public double sub(double a, double b) {
-		return a - b;
-	}
-
-	public double multiply(double a, double b) {
-		return a * b;
-	}
-
-	public double divide(double a, double b) {
-		return a / b;
-	}
 
 	public BigInteger factorial(int n) {
 		if (n < 0 ) {
@@ -110,22 +99,8 @@ public class Calculator {
 				.map(Character::getNumericValue)
 				.boxed()
 				.collect(Collectors.toSet());
-		/*
-		Set<Integer> digits = new HashSet<>();
-    number = Math.abs(number); // Ignorer le signe négatif
-
-    if (number == 0) {
-        digits.add(0); // Gérer explicitement le cas où le nombre est 0
-    }
-
-    while (number > 0) {
-        digits.add(number % 10); // Extraire le dernier chiffre
-        number /= 10; // Supprimer le dernier chiffre
-    }
-
-    return digits;
-		 */
 
 	}
+
 
 }

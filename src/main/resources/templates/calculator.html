@@ -3,6 +3,84 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Calculateur du cours de tests OpenClassrooms</title>
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/calculator.css}"/>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">Open Calculator</a>
+</nav>
+
+<main role="main" class="container mt-5 pt-5">
+    <div class="starter-template">
+        <form action="#" th:action="@{/calculator}" th:object="${calculation}" method="post">
+            <div class="calculator">
+                <div id="display" class="mb-3">
+                    <div id="current-input">0</div>
+                    <div id="result" th:text="${response?.solution}" style="font-size: 1.2rem; color: #2ecc71;"></div>
+                </div>
+
+                <input type="hidden" th:field="*{leftArgument}" id="leftArgument">
+                <input type="hidden" th:field="*{calculationType}" id="calculationType">
+                <input type="hidden" th:field="*{rightArgument}" id="rightArgument">
+
+                <div class="row">
+                    <div class="col-3">
+                        <button type="button" class="btn btn-custom btn-clear" onclick="clearAll()">C</button>
+                    </div>
+                    <div class="col-9">
+                        <div class="row">
+                            <div class="col-3"><button type="button" class="btn btn-custom btn-operator" data-operator="MODULO">%</button></div>
+                            <div class="col-3"><button type="button" class="btn btn-custom btn-operator" data-operator="DIVISION">/</button></div>
+                            <div class="col-3"><button type="button" class="btn btn-custom btn-operator" data-operator="MULTIPLICATION">×</button></div>
+                            <div class="col-3"><button type="button" class="btn btn-custom btn-operator" data-operator="SUBTRACTION">-</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-9">
+                        <div class="row">
+                            <!-- Numpad -->
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-number" onclick="appendNumber(7)">7</button></div>
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-number" onclick="appendNumber(8)">8</button></div>
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-number" onclick="appendNumber(9)">9</button></div>
+
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-number" onclick="appendNumber(4)">4</button></div>
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-number" onclick="appendNumber(5)">5</button></div>
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-number" onclick="appendNumber(6)">6</button></div>
+
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-number" onclick="appendNumber(1)">1</button></div>
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-number" onclick="appendNumber(2)">2</button></div>
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-number" onclick="appendNumber(3)">3</button></div>
+
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-number" onclick="appendNumber(0)">0</button></div>
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-number" onclick="appendDecimal()">.</button></div>
+                            <div class="col-4"><button type="button" class="btn btn-custom btn-operator" data-operator="ADDITION">+</button></div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <button type="submit" class="btn btn-equals btn-custom">=</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+<script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script th:src="@{/static/js/calculator.js}"></script>
+</body>
+</html>
+<!--
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title>Calculateur du cours de tests OpenClassrooms</title>
 
@@ -69,8 +147,8 @@
 
 
 </main>
-<!-- /.container -->
+&lt;!&ndash; /.container &ndash;&gt;
 
 <script type="text/javascript" th:src="@{webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
 </body>
-</html>
+</html>-->

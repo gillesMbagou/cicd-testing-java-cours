@@ -20,12 +20,14 @@ public class CalculatorServiceIT {
 	@Test
 	public void calculatorService_shouldCalculateASolution_whenGivenACalculationModel() {
 		// GIVEN
-		final CalculationModel calculation = new CalculationModel(CalculationType.ADDITION,
-				100, 101);
+		final CalculationModel calculation = new CalculationModel();
+		calculation.setLeftArgument(100.0);
+		calculation.setRightArgument(101.0);
+		calculation.setType(CalculationType.ADDITION);
 		// WHEN
 		final CalculationModel result = underTest.calculate(calculation);
 
 		// THEN
-		assertThat(result.getSolution()).isEqualTo(201);
+		assertThat(result.getSolution()).isEqualTo(201.);
 	}
 }

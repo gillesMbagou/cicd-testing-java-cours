@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Calculator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+<!--    <link rel="stylesheet" th:href="@{../styles/vue-calculator.css}"/>-->
+    <link rel="stylesheet" href="../styles/vue-calculator.css">
+    <script src="../static/js/vue-calculator.js"></script>
+</head>
+<body>
+<div id="app">
+    <div class="calculator-container">
+        <div class="calculator">
+            <div id="display">
+                <div class="current-input">{{ currentInput || '0' }}</div>
+<!--                <div class="result" v-if="result !== null">= {{ result }}</div>-->
+            </div>
+
+            <!-- Ligne 1 -->
+            <div class="row">
+                <button @click="clear" class="btn-clear">C</button>
+                <button class="btn-operator">(</button>
+                <button class="btn-operator">)</button>
+                <button @click=setBinaryOperator('%') class="btn-operator">mod</button>
+                <button class="btn-operator">n</button>
+            </div>
+
+            <!-- Ligne 2 -->
+            <div class="row">
+                <button v-for="num in [7,8,9]" :key="num" @click="appendNumber(num)" class="btn-number">{{ num }}</button>
+                <button @click="setBinaryOperator('÷')" class="btn-operator">÷</button>
+                <button @click="handleUnaryOperation('√')">√</button>
+            </div>
+
+            <!-- Ligne 3 -->
+            <div class="row">
+                <button v-for="num in [4,5,6]" :key="num" @click="appendNumber(num)" class="btn-number">{{ num }}</button>
+                <button @click="setBinaryOperator('×')">×</button>
+            </div>
+
+            <!-- Ligne 4 -->
+            <div class="row">
+                <button v-for="num in [1,2,3]" :key="num" @click="appendNumber(num)" class="btn-number">{{ num }}</button>
+                <button @click="setBinaryOperator('-')" class="btn-operator">-</button>
+                <button @click="handleUnaryOperation('x²')" class="btn-operator" >x²</button>
+            </div>
+
+            <!-- Ligne 5 -->
+            <div class="row">
+                <button @click="appendNumber(0)" class="btn-number">0</button>
+                <button @click="appendDecimal" class="btn-number">.</button>
+                <button @click="setBinaryOperator('%')" class="btn-operator">%</button>
+                <button @click="setBinaryOperator('+')" class="btn-operator">+</button>
+                <button @click="calculate" class="btn-equals">=</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Dépendances JS -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script th:src="@{/js/vue-calculator.js}"></script>
+
+<!-- Bootstrap -->
+<script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+</body>
+</html>

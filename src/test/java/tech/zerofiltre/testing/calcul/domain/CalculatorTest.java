@@ -86,7 +86,7 @@ public class CalculatorTest {
 		final int b = 11;
 
 		// Act
-		final int produit = calculatorUnderTest.multiply(a, b);
+		final double produit = calculatorUnderTest.multiply(a, b);
 
 		// Assert
 		assertEquals(462, produit);
@@ -98,7 +98,7 @@ public class CalculatorTest {
 		// Arrange -- Tout est prêt !
 
 		// Act -- Multiplier par zéro
-		final int actualResult = calculatorUnderTest.multiply(arg, 0);
+		final double actualResult = calculatorUnderTest.multiply(arg, 0);
 
 		// Assert -- ça vaut toujours zéro !
 		assertEquals(0, actualResult);
@@ -201,7 +201,7 @@ public class CalculatorTest {
 		final int b = 1 + r.nextInt(3);
 
 		// WHEN on multiplie a par b puis on divise par b
-		final int c = calculatorUnderTest.divide(calculatorUnderTest.multiply(a, b), b);
+		final double c = calculatorUnderTest.divide(calculatorUnderTest.multiply(a, b), b);
 
 		// THEN on ré-obtient a
 		assertThat(c).isEqualTo(a);

@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class DoubleCalculatorTest {
 	private Calculator calculatorUnderTest;
 
@@ -11,19 +14,32 @@ public class DoubleCalculatorTest {
 	public void initCalculator() {
 		calculatorUnderTest = new Calculator();
 	}
-	
+
 	@Test
-	@Disabled("Test ambigu et hors limite du type double")
-	public void subTwoDoubleNumbers_shouldReturnsTheCorrectAnswer() {
+	public void subTwoIntegers_shouldReturnCorrectResult() {
 		// GIVEN
-		
+		int a = 10;
+		int b = 5;
+
 		// WHEN
-		double result = calculatorUnderTest.sub(1.0000000001, 1.0);
-		
+		double result = calculatorUnderTest.sub(a, b);
+
 		// THEN
-		if(result != 0.0000000001) {
-			throw new AssertionError(String.format("Erreur :\nAttendu :  0,0000000001\n Résultat : %.10f", result));
-		}
-		
+		assertEquals(5.0, result, "La soustraction de 10 et 5 devrait donner 5.0");
 	}
+
+	@Test
+	public void subTwoIntegers_withOverflow_shouldThrowArithmeticException() {
+		// GIVEN
+		int a = Integer.MIN_VALUE;
+		int b = 1;
+
+		// WHEN & THEN
+		ArithmeticException exception = assertThrows(ArithmeticException.class, () -> {
+			calculatorUnderTest.sub(a, b);
+		});
+
+		assertEquals("integer overflow", exception.getMessage(), "L'exception devrait indiquer un dépassement de capacité");
+	}
+
 }

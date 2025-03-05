@@ -1,0 +1,93 @@
+:root {
+    --bg-color: white;
+    --panel-bg: white;
+    --text-primary: #a9b7c6;
+    --highlight-blue: #6897bb;
+    --highlight-green: #499c54;
+    --highlight-orange: #cc7832;
+    --highlight-red: #d05b5b;
+    --border-color: #515151;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+#app {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calculator {
+    background-color: var(--panel-bg);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
+}
+
+#display {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.current-input {
+    font-size: 2em;
+    min-height: 1.5em;
+    text-align: right;
+    color: var(--text-primary);
+}
+
+.result {
+    color: var(--highlight-green);
+    font-size: 1.2em;
+    text-align: right;
+    opacity: 0.8;
+}
+
+.btn-custom {
+    border: 1px solid var(--border-color) !important;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+/* Ajouts spécifiques à la nouvelle disposition */
+.row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+    margin-bottom: 8px;
+}
+
+.row:nth-child(4) {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.btn-number, .btn-operator, .btn-equals, .btn-clear {
+    aspect-ratio: 1/1;
+    font-size: 1.2em;
+    padding: 15px;
+}
+
+.btn-equals {
+    background-color: #27ae60 !important;
+    grid-column: span 1;
+}
+
+/* Adaptation des couleurs pour les nouvelles fonctions */
+.btn-operator[data-operator="x²"] {
+    background-color: #8e44ad;
+}
+
+.btn-operator[data-operator="√"] {
+    background-color: #16a085;
+}
+
+/* ... Ajouter ici les autres styles de la version précédente ... */
