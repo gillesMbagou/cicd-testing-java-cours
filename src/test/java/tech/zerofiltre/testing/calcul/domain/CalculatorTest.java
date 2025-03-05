@@ -72,7 +72,7 @@ public class CalculatorTest {
 		final int b = 3;
 
 		// Act
-		final int somme = calculatorUnderTest.add(a, b);
+		final double somme = calculatorUnderTest.add(a, b);
 
 		// Assert
 		assertThat(somme).isEqualTo(5);
@@ -110,7 +110,7 @@ public class CalculatorTest {
 		// Arrange -- Tout est prêt !
 
 		// Act
-		final int actualResult = calculatorUnderTest.add(arg1, arg2);
+		final double actualResult = calculatorUnderTest.add(arg1, arg2);
 
 		// Assert
 		assertEquals(expectResult, actualResult);
