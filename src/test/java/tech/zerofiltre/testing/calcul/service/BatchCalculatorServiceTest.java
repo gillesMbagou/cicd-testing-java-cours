@@ -53,7 +53,7 @@ public class BatchCalculatorServiceTest {
 		final List<CalculationModel> results = batchCalculatorServiceNoMock.batchCalculate(operations);
 
 		// THEN
-		assertThat(results).extracting(CalculationModel::getSolution).containsExactly(4, 1, 48, 3);
+		assertThat(results).extracting(CalculationModel::getSolution).containsExactly(4.0, 1.0, 48.0, 3.0);
 	}
 
 	@Test
@@ -72,10 +72,10 @@ public class BatchCalculatorServiceTest {
 				.extracting(CalculationModel::getLeftArgument, CalculationModel::getType,
 						CalculationModel::getRightArgument)
 				.containsExactly(
-						tuple(2, CalculationType.ADDITION, 2),
-						tuple(5, CalculationType.SUBTRACTION, 4),
-						tuple(6, CalculationType.MULTIPLICATION, 8),
-						tuple(9, CalculationType.DIVISION, 3));
+						tuple(2.0, CalculationType.ADDITION, 2.0),
+						tuple(5., CalculationType.SUBTRACTION, 4.),
+						tuple(6., CalculationType.MULTIPLICATION, 8.),
+						tuple(9., CalculationType.DIVISION, 3.));
 	}
 
 	@Test
@@ -87,16 +87,16 @@ public class BatchCalculatorServiceTest {
 					final CalculationModel model = invocation.getArgument(0, CalculationModel.class);
 					switch (model.getType()) {
 					case ADDITION:
-						model.setSolution(4);
+						model.setSolution(4.0);
 						break;
 					case SUBTRACTION:
-						model.setSolution(1);
+						model.setSolution(1.0);
 						break;
 					case MULTIPLICATION:
-						model.setSolution(48);
+						model.setSolution(48.0);
 						break;
 					case DIVISION:
-						model.setSolution(3);
+						model.setSolution(3.0);
 						break;
 					default:
 					}
@@ -108,7 +108,7 @@ public class BatchCalculatorServiceTest {
 
 		// THEN
 		verify(calculatorService, times(4)).calculate(any(CalculationModel.class));
-		assertThat(results).extracting("solution").containsExactly(4, 1, 48, 3);
+		assertThat(results).extracting("solution").containsExactly(4., 1., 48., 3.);
 
 	}
 
@@ -117,17 +117,17 @@ public class BatchCalculatorServiceTest {
 		// GIVEN
 		final Stream<String> operations = Arrays.asList("2 + 2", "5 - 4", "6 x 8", "9 / 3").stream();
 		when(calculatorService.calculate(any(CalculationModel.class)))
-				.thenReturn(new CalculationModel(CalculationType.ADDITION, 2, 2, 4))
-				.thenReturn(new CalculationModel(CalculationType.SUBTRACTION, 5, 4, 1))
-				.thenReturn(new CalculationModel(CalculationType.MULTIPLICATION, 6, 8, 48))
-				.thenReturn(new CalculationModel(CalculationType.DIVISION, 9, 3, 3));
+				.thenReturn(new CalculationModel(CalculationType.ADDITION, 2, 2, 4.0))
+				.thenReturn(new CalculationModel(CalculationType.SUBTRACTION, 5, 4, 1.0))
+				.thenReturn(new CalculationModel(CalculationType.MULTIPLICATION, 6, 8, 48.0))
+				.thenReturn(new CalculationModel(CalculationType.DIVISION, 9, 3, 3.0));
 
 		// WHEN
 		final List<CalculationModel> results = batchCalculatorService.batchCalculate(operations);
 
 		// THEN
 		verify(calculatorService, times(4)).calculate(any(CalculationModel.class));
-		assertThat(results).extracting("solution").containsExactly(4, 1, 48, 3);
+		assertThat(results).extracting("solution").containsExactly(4.0, 1.0, 48.0, 3.0);
 
 	}
 

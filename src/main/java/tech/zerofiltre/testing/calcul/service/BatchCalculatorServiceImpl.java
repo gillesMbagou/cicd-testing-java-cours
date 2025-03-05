@@ -19,8 +19,24 @@ public class BatchCalculatorServiceImpl implements BatchCalculatorService {
 
 	@Override
 	public List<CalculationModel> batchCalculate(Stream<String> operations) {
-		return operations.map(s -> calculatorService.calculate(CalculationModel.fromText(s)))
+		return operations
+				.map(this::parseAndCalculateSafely)
 				.collect(Collectors.toList());
+	}
+
+	private CalculationModel parseAndCalculateSafely(String operation) {
+		try {
+			CalculationModel model = CalculationModel.fromText(operation);
+			return calculatorService.calculate(model);
+		} catch (Exception e) {
+			return createErrorModel(operation, e);
+		}
+	}
+
+	private CalculationModel createErrorModel(String operation, Exception e) {
+		CalculationModel errorModel = new CalculationModel();
+		errorModel.setError("Erreur avec '" + operation + "': " + e.getMessage());
+		return errorModel;
 	}
 
 }
