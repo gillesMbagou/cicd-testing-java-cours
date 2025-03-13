@@ -6,7 +6,6 @@ import lombok.Getter;
 import tech.zerofiltre.testing.calcul.domain.strategy.CalculationStrategy;
 import tech.zerofiltre.testing.calcul.exception.strategy.CalculationException;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

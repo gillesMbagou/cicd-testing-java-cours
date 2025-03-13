@@ -21,7 +21,7 @@ public class BatchCalculatorServiceImpl implements BatchCalculatorService {
 	public List<CalculationModel> batchCalculate(Stream<String> operations) {
 		return operations
 				.map(this::parseAndCalculateSafely)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	private CalculationModel parseAndCalculateSafely(String operation) {

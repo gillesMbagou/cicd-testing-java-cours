@@ -1,162 +1,148 @@
 package tech.zerofiltre.testing.calcul.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import java.util.Random;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-import org.junit.Ignore;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import tech.zerofiltre.testing.calcul.domain.Calculator;
 import tech.zerofiltre.testing.calcul.domain.model.CalculationModel;
 import tech.zerofiltre.testing.calcul.domain.model.CalculationType;
 
 @ExtendWith(MockitoExtension.class)
-public class CalculatorServiceTest {
-/*
+ class CalculatorServiceTest {
+	private CalculatorServiceImpl  classUnderTest;
 
-	@Mock
-	Calculator calculator;
 
-	@Mock
-	SolutionFormatter solutionFormatter;
-
-	CalculatorService classUnderTest;
 
 	@BeforeEach
-	public void init() {
-		classUnderTest = new CalculatorServiceImpl(calculator, solutionFormatter);
+	void setUp() {
+		 classUnderTest = new CalculatorServiceImpl();
+
 	}
 
 	@Test
-	public void calculate_shouldUseCalculator_forAddition() {
+	void calculate_shouldReturnError_whenTypeIsNull() {
 		// GIVEN
-		when(calculator.add(1, 2)).thenReturn(3);
+		CalculationModel model = new CalculationModel();
+		model.setType(null);
 
 		// WHEN
-		final Double result = classUnderTest.calculate(
-				new CalculationModel(CalculationType.ADDITION, 1, 2)).getSolution();
+		CalculationModel result =  classUnderTest.calculate(model);
 
 		// THEN
-		verify(calculator).add(1, 2);
-		assertThat(result).isEqualTo(3);
+		assertThat(result.getError()).isEqualTo("Type de calcul non spécifié");
 	}
 
 	@Test
-	public void calculate_shouldUseCalculator_forSubstraction() {
+	void calculate_shouldReturnResult_forValidAddition() {
 		// GIVEN
-		when(calculator.sub(3, 2)).thenReturn(1);
+		CalculationModel model = new CalculationModel(CalculationType.ADDITION, 5.0, 3.0, null);
 
 		// WHEN
-		final Double result = classUnderTest.calculate(
-				new CalculationModel(CalculationType.SUBTRACTION, 3, 2))
-				.getSolution();
+		CalculationModel result =  classUnderTest.calculate(model);
 
 		// THEN
-		verify(calculator).sub(3, 2);
-		assertThat(result).isEqualTo(1);
+		assertThat(result.getSolution()).isEqualTo(8.0);
+		assertThat(result.getError()).isNull();
 	}
 
 	@Test
-	public void calculate_shouldUseCalculator_forMultiplication() {
+	void calculate_shouldHandleError_whenCalculationExceptionOccurs() {
 		// GIVEN
-		when(calculator.multiply(-3, 2)).thenReturn(-6);
+		CalculationModel model = new CalculationModel(CalculationType.DIVISION, 5.0, 0.0, null);
 
 		// WHEN
-		final Double result = classUnderTest.calculate(
-				new CalculationModel(CalculationType.MULTIPLICATION, -3, 2))
-				.getSolution();
+		CalculationModel result =  classUnderTest.calculate(model);
 
 		// THEN
-		verify(calculator).multiply(-3, 2);
-		assertThat(result).isEqualTo(-6);
+		assertThat(result.getError()).isEqualTo("Division par zéro impossible");
+		assertThat(result.getSolution()).isNull();
 	}
 
 	@Test
-	public void calculate_shouldUseCalculator_forDivision() {
+	void prepareOperands_shouldHandleUnaryOperation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+		// Obtenir la méthode privée via réflexion
+		Method prepareOperandsMethod = CalculatorServiceImpl.class.getDeclaredMethod("prepareOperands",
+				CalculationModel.class, CalculationType.class);
+		prepareOperandsMethod.setAccessible(true);
 		// GIVEN
-		when(calculator.divide(6, 3)).thenReturn(2);
+		CalculationModel model = new CalculationModel(CalculationType.SQUARE, 4.0, 0., null);
 
 		// WHEN
-		final Double result = classUnderTest.calculate(
-				new CalculationModel(CalculationType.DIVISION, 6, 3))
-				.getSolution();
+		double[] result = (double[]) prepareOperandsMethod.invoke(classUnderTest,model, CalculationType.SQUARE);
 
 		// THEN
-		verify(calculator).divide(6, 3);
-		assertThat(result).isEqualTo(2);
+		assertThat(result).hasSize(1);
+		assertThat(result[0]).isEqualTo(4.0);
 	}
 
 	@Test
-	public void calculate_shouldUseCalculator_forAnyAddition() {
+	void prepareOperands_shouldHandleBinaryOperation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+		// Obtenir la méthode privée via réflexion
+		Method prepareOperandsMethod = CalculatorServiceImpl.class.getDeclaredMethod("prepareOperands",
+				CalculationModel.class, CalculationType.class);
+		prepareOperandsMethod.setAccessible(true);
 		// GIVEN
-		final Random r = new Random();
-		when(calculator.add(any(Integer.class), any(Integer.class))).thenReturn(3);
+		CalculationModel model = new CalculationModel(CalculationType.ADDITION, 4.0, 2.0, null);
 
 		// WHEN
-		final Double result = classUnderTest.calculate(
-				new CalculationModel(CalculationType.ADDITION, r.nextInt(), r.nextInt())).getSolution();
+		double[] result = (double[]) prepareOperandsMethod.invoke(classUnderTest,model, CalculationType.ADDITION);
 
 		// THEN
-		verify(calculator, times(1)).add(any(Integer.class), any(Integer.class));
-		verify(calculator, never()).sub(any(Integer.class), any(Integer.class));
-		assertThat(result).isEqualTo(3);
+		assertThat(result).hasSize(2);
+		assertThat(result[0]).isEqualTo(4.0);
+		assertThat(result[1]).isEqualTo(2.0);
 	}
-
 	@Test
-	public void calculate_shouldThrowIllegalArgumentException_forADivisionBy0() {
-
-		// WHEN
-		assertThrows(IllegalArgumentException.class, () -> classUnderTest.calculate(
-				new CalculationModel(CalculationType.DIVISION, 1, 0)));
-
-		// THEN
-		verify(calculator, never()).divide(1, 0); // Aucun appel à divide()
-		*/
-/*//*
-/ GIVEN
-		CalculationModel calculationModel = new CalculationModel(CalculationType.DIVISION, 1, 0);
-
-		// WHEN & THEN
-		assertThrows(IllegalArgumentException.class, () -> classUnderTest.calculate(calculationModel));*//*
-
-		*/
-/*//*
-/ GIVEN
-		when(calculator.divide(1, 0)).thenThrow(new IllegalArgumentException());
-
-		// WHEN
-		assertThrows(IllegalArgumentException.class, () -> classUnderTest.calculate(
-				new CalculationModel(CalculationType.DIVISION, 1, 0)));
-
-		// THEN
-		verify(calculator, times(1)).divide(1, 0);*//*
-
-	}
-
-	@Test
-	public void calculate_shouldFormatSolution_forAnAddition() {
+	void calculate_shouldReturnError_whenTypeIsNullWithLRarguments() {
 		// GIVEN
-		when(calculator.add(10000, 3000)).thenReturn(13000);
-		when(solutionFormatter.format(13000)).thenReturn("13 000");
+		CalculationModel calculationModel = new CalculationModel();
+		calculationModel.setLeftArgument(2.0);
+		calculationModel.setRightArgument(3.0);
+		calculationModel.setType(null);
 
 		// WHEN
-		final String formattedResult = classUnderTest.calculate(
-				new CalculationModel(CalculationType.ADDITION, 10000, 3000)).getFormattedSolution();
+		CalculationModel result = classUnderTest.calculate(calculationModel);
 
 		// THEN
-		assertThat(formattedResult).isEqualTo("13 000");
+		assertThat(result.getError()).isEqualTo("Type de calcul non spécifié");
 	}
-*/
 
+	@Test
+	void calculate_shouldHandleUnaryOperation_whenOperandCountIsOne() {
+		// GIVEN
+		CalculationModel calculationModel = new CalculationModel();
+		calculationModel.setLeftArgument(4.0);
+		calculationModel.setType(CalculationType.SQUARE);
+
+		// WHEN
+		CalculationModel result = classUnderTest.calculate(calculationModel);
+
+		// THEN
+		assertThat(result.getSolution()).isEqualTo(16.0);
+	}
+	@Test
+	void testPrepareOperands() throws Exception {
+		// Obtenir la méthode privée via réflexion
+		Method prepareOperandsMethod = CalculatorServiceImpl.class.getDeclaredMethod("prepareOperands",
+				CalculationModel.class, CalculationType.class);
+		prepareOperandsMethod.setAccessible(true);
+
+		// Créer les données de test
+		CalculationModel model = new CalculationModel(CalculationType.ADDITION, 5.0, 3.0, null);
+
+		// Invoquer la méthode privée
+		double[] result = (double[]) prepareOperandsMethod.invoke(classUnderTest, model, CalculationType.ADDITION);
+
+		// Vérifier le résultat
+		assertThat(result).hasSize(2);
+		assertThat(result[0]).isEqualTo(5.0);
+		assertThat(result[1]).isEqualTo(3.0);
+	}
 }

@@ -2,26 +2,14 @@ package tech.zerofiltre.testing.calcul.service;
 
 import javax.inject.Named;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import tech.zerofiltre.testing.calcul.domain.Calculator;
+import lombok.Getter;
 import tech.zerofiltre.testing.calcul.domain.model.CalculationModel;
 import tech.zerofiltre.testing.calcul.domain.model.CalculationType;
 import tech.zerofiltre.testing.calcul.exception.strategy.CalculationException;
 
+@Getter
 @Named
 public class CalculatorServiceImpl implements CalculatorService {
-
-	private static final Logger logger = LoggerFactory.getLogger(CalculatorServiceImpl.class);
-
-	private final Calculator calculator;
-
-	private final SolutionFormatter solutionFormatter;
-
-	public CalculatorServiceImpl(Calculator calculator, SolutionFormatter solutionFormatter) {
-		this.calculator = calculator;
-		this.solutionFormatter = solutionFormatter;
-	}
 
 	@Override
 	public CalculationModel calculate(CalculationModel calculationModel) {
@@ -38,7 +26,8 @@ public class CalculatorServiceImpl implements CalculatorService {
 			double result = type.apply(operands);
 			calculationModel.setSolution(result);
 		} catch (CalculationException e) {
-			calculationModel.setError(e.getMessage());
+
+            calculationModel.setError(e.getMessage());
 		}
 
 		return calculationModel;

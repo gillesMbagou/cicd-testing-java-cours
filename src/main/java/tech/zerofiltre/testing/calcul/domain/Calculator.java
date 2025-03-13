@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Named;
 
+import static java.lang.String.*;
+
 @Named
 public class Calculator {
 	private  final ConcurrentHashMap<Integer,BigInteger> memo = new ConcurrentHashMap<>();
@@ -83,8 +85,8 @@ public class Calculator {
 		}
 		return result;
 	}
-	public void longCalculation() {
-		CompletableFuture.runAsync(() -> {
+	public  CompletableFuture<Void> longCalculation() {
+		return CompletableFuture.runAsync(() -> {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
