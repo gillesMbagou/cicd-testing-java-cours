@@ -3,9 +3,7 @@ package tech.zerofiltre.testing.calcul.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -26,16 +24,17 @@ class BatchCalculatorServiceTest {
 	@Mock
 	CalculatorService calculatorService;
 
+
 	BatchCalculatorService batchCalculatorService;
 
-	BatchCalculatorService batchCalculatorServiceNoMock;
+
+	BatchCalculatorServiceImpl batchCalculatorServiceNoMock;
 
 	@BeforeEach
 	  void init() {
-		batchCalculatorService = new BatchCalculatorServiceImpl(calculatorService);
+		batchCalculatorService = new BatchCalculatorServiceImplBuilder().setCalculatorService(calculatorService).createBatchCalculatorServiceImpl		();
 
-		batchCalculatorServiceNoMock = new BatchCalculatorServiceImpl(
-				new CalculatorServiceImpl());
+		batchCalculatorServiceNoMock = new BatchCalculatorServiceImplBuilder().setCalculatorService(new CalculatorServiceImpl()).createBatchCalculatorServiceImpl();
 	}
 
 	@Test
@@ -124,6 +123,83 @@ class BatchCalculatorServiceTest {
 		verify(calculatorService, times(4)).calculate(any(CalculationModel.class));
 		assertThat(results).extracting("solution").containsExactly(4.0, 1.0, 48.0, 3.0);
 
+	}
+	@Test
+	void testCreateErrorModel() {
+		// GIVEN
+		String operation = "division";
+		Exception exception = new ArithmeticException("Division by zero");
+
+		// WHEN
+		CalculationModel result = invokeCreateErrorModel(operation, exception);
+
+		// THEN
+		assertThat(result).isNotNull();
+		assertThat(result.getError()).isEqualTo("Erreur avec 'division': Division by zero");
+	}
+
+	// Utilisation de la réflexion pour tester une méthode privée
+	private CalculationModel invokeCreateErrorModel(String operation, Exception e) {
+		try {
+			java.lang.reflect.Method method = BatchCalculatorServiceImpl.class.getDeclaredMethod("createErrorModel", String.class, Exception.class);
+			method.setAccessible(true);
+			return (CalculationModel) method.invoke(batchCalculatorServiceNoMock, operation, e);
+		} catch (Exception ex) {
+			throw new RuntimeException("Error invoking private method", ex);
+		}
+	}
+	@Test
+	void testBatchCalculate_AllValidOperations() {
+		// GIVEN - Des opérations valides
+		Stream<String> operations = Stream.of("2 + 2", "3 * 3");
+		CalculationModel model1 = CalculationModel.fromText("2 + 2");
+		CalculationModel model2 = CalculationModel.fromText("3 * 3");
+
+		CalculationModel result1 = new CalculationModel(); // Simule un résultat
+		CalculationModel result2 = new CalculationModel();
+
+		when(calculatorService.calculate(model1)).thenReturn(result1);
+		when(calculatorService.calculate(model2)).thenReturn(result2);
+
+		// WHEN
+		List<CalculationModel> results = batchCalculatorService.batchCalculate(operations);
+
+		// THEN
+		assertThat(results).containsExactly(result1, result2);
+		verify(calculatorService, times(1)).calculate(model1);
+		verify(calculatorService, times(1)).calculate(model2);
+	}
+
+	@Test
+	void testBatchCalculate_EmptyStream() {
+		// GIVEN - Un stream vide
+		Stream<String> operations = Stream.empty();
+
+		// WHEN
+		List<CalculationModel> results = batchCalculatorService.batchCalculate(operations);
+
+		// THEN
+		assertThat(results).isEmpty();
+		verifyNoInteractions(calculatorService);
+	}
+
+	@Test
+	void batchCalculate_InvalidOperation_ReturnsErrorModel() {
+		String invalidOp = "invalid_operation";
+
+		List<CalculationModel> results = batchCalculatorServiceNoMock.batchCalculate(Stream.of(invalidOp));
+
+		assertThat(results).hasSize(1);
+		assertThat(results.get(0).getError()).startsWith("Erreur avec 'invalid_operation'");
+		verify(calculatorService, never()).calculate(any());
+	}
+
+
+	@Test
+	void batchCalculate_EmptyStream_ReturnsEmptyList() {
+		List<CalculationModel> results = batchCalculatorServiceNoMock.batchCalculate(Stream.empty());
+		assertThat(results).isEmpty();
+		verify(calculatorService, never()).calculate(any());
 	}
 
 }

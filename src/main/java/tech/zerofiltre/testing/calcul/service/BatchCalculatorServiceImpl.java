@@ -6,12 +6,16 @@ import java.util.stream.Stream;
 
 import javax.inject.Named;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tech.zerofiltre.testing.calcul.domain.model.CalculationModel;
 
 @Named
 public class BatchCalculatorServiceImpl implements BatchCalculatorService {
 
 	private final CalculatorService calculatorService;
+	private static final Logger LOGGER = LoggerFactory.getLogger(BatchCalculatorServiceImpl.class);
+
 
 	public BatchCalculatorServiceImpl(CalculatorService calculatorService) {
 		this.calculatorService = calculatorService;
@@ -29,7 +33,8 @@ public class BatchCalculatorServiceImpl implements BatchCalculatorService {
 			CalculationModel model = CalculationModel.fromText(operation);
 			return calculatorService.calculate(model);
 		} catch (Exception e) {
-			return createErrorModel(operation, e);
+			LOGGER.error("Erreur lors du calcul de l'opération '{}'", operation, e);
+            return createErrorModel(operation, e);
 		}
 	}
 

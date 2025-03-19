@@ -1,11 +1,14 @@
 package tech.zerofiltre.testing.calcul.service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 import javax.inject.Named;
+
+import static java.nio.file.Paths.get;
 
 /**
  * Reads a text file and returns a stream of calculations
@@ -29,6 +32,16 @@ public class BatchCalculationFileServiceImpl implements BatchCalculationFileServ
 	 */
 	@Override
 	public Stream<String> read(String file) throws IOException {
-		return Files.lines(Paths.get(file));
-	}
+		BufferedReader reader = Files.newBufferedReader(get(file));
+		return reader.lines()
+				.onClose(() -> {
+					try {
+						reader.close();
+					} catch (IOException e) {
+						throw new UncheckedIOException(e);
+					}
+				});
+		}
+
+
 }
