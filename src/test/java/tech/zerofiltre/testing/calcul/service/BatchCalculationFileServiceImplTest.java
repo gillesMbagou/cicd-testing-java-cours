@@ -89,7 +89,7 @@ class BatchCalculationFileServiceImplTest {
             // WHEN & THEN
             assertThrows(UncheckedIOException.class, () -> {
                 try (Stream<String> stream = spyService.read(testFile.toString())) {
-                    stream.close(); // Forcer la fermeture pour déclencher l'exception
+                    // Forcer la fermeture pour déclencher l'exception
                 }
             });
         }
