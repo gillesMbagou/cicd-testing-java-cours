@@ -57,13 +57,27 @@ public class CalculationModel {
 	}
 
 	public static CalculationModel fromText(String operation) {
-		String[] parts = operation.split("\\s+");
-		if(parts.length != 3) {
+		if (operation == null || operation.trim().isEmpty()) {
+			throw new IllegalArgumentException("L'opération ne peut pas être nulle ou vide.");
+		}
+
+		// Regex pour valider le format : "nombre opérateur nombre"
+		String regex = "^\\s*(-?\\d+(\\.\\d+)?)\\s*([+\\-*/x])\\s*(-?\\d+(\\.\\d+)?)\\s*$"; // Ajout de 'x'
+		if (!operation.matches(regex)) {
 			throw new IllegalArgumentException("Format d'opération invalide: " + operation);
 		}
 
+		// Découper l'entrée
+		String[] parts = operation.trim().split("\\s+");
+		String operator = parts[1];
+
+		// Convertir 'x' en '*' pour simplifier les calculs
+		/*if ("x".equals(operator)) {
+			operator = "*";
+		}*/
+
 		return new CalculationModel(
-				parseOperator(parts[1]),
+				operator,
 				Double.parseDouble(parts[0]),
 				Double.parseDouble(parts[2])
 		);

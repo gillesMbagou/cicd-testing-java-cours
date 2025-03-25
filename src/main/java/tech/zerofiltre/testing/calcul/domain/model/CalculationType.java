@@ -14,7 +14,7 @@ import java.util.Set;
 public enum CalculationType {
     ADDITION(Set.of("+", "plus","add"),"+", 2, ops -> ops[0] + ops[1]),
     SUBTRACTION(Set.of("-","moins","sub"),"-", 2, ops -> ops[0] - ops[1]),
-    MULTIPLICATION(Set.of("×", "x", "X", "*"),"×", 2, ops -> ops[0] * ops[1]),
+    MULTIPLICATION(Set.of("×", "x", "X", "*"),"*", 2, ops -> ops[0] * ops[1]),
     DIVISION(Set.of("/", "÷","div"),"/", 2, ops -> {
         if(ops[1] == 0) throw new CalculationException("Division par zéro impossible");
         return ops[0] / ops[1];
